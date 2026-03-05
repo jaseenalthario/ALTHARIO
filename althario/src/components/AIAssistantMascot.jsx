@@ -2,16 +2,60 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
 import { Sparkles } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
-const scrollMessages = [
-    { threshold: 0.0, text: "👋 Hi! I'm your Althario AI assistant." },
-    { threshold: 0.2, text: "We build custom enterprise software." },
-    { threshold: 0.4, text: "Scale your business with AI automation." },
-    { threshold: 0.6, text: "Ready to accelerate your digital presence?" },
-    { threshold: 0.8, text: "Let's engineer your success. Get in touch!" }
-];
+const getContextMessages = (pathname) => {
+    if (pathname.includes('/services/agentic-ai')) {
+        return [
+            { threshold: 0.0, text: "👋 Welcome to Agentic AI automation." },
+            { threshold: 0.2, text: "Deploy self-learning neural networks." },
+            { threshold: 0.4, text: "Automate complex enterprise workflows." },
+            { threshold: 0.6, text: "AI that takes action, not just text generation." },
+            { threshold: 0.8, text: "Ready to deploy your neural workforce?" }
+        ];
+    } else if (pathname.includes('/services/software-development')) {
+        return [
+            { threshold: 0.0, text: "👋 Exploring our software capabilities?" },
+            { threshold: 0.2, text: "We engineer scalable enterprise platforms." },
+            { threshold: 0.4, text: "Focusing on security and system integration." },
+            { threshold: 0.6, text: "Robust architectures with modern tech stacks." },
+            { threshold: 0.8, text: "Let's align our code with your vision." }
+        ];
+    } else if (pathname.includes('/services/web-development')) {
+        return [
+            { threshold: 0.0, text: "👋 Let's build a high-performance web asset." },
+            { threshold: 0.2, text: "Crafting immersive, high-end digital experiences." },
+            { threshold: 0.4, text: "Optimizing for maximum speed and conversion." },
+            { threshold: 0.6, text: "Responsive engineering for every screen size." },
+            { threshold: 0.8, text: "Ready to elevate your digital presence?" }
+        ];
+    } else if (pathname.includes('/about')) {
+        return [
+            { threshold: 0.0, text: "👋 Discover the minds behind Althario." },
+            { threshold: 0.3, text: "We believe in transforming digital landscapes." },
+            { threshold: 0.6, text: "Our expertise spans across AI and digital engineering." },
+            { threshold: 0.9, text: "Join forces with our elite technical team." }
+        ];
+    } else if (pathname.includes('/contact')) {
+        return [
+            { threshold: 0.0, text: "👋 We're here to help." },
+            { threshold: 0.5, text: "Send us a message or schedule a call!" }
+        ];
+    } else {
+        // Default / Home
+        return [
+            { threshold: 0.0, text: "👋 Hi! I'm your Althario AI assistant." },
+            { threshold: 0.2, text: "We build custom enterprise software." },
+            { threshold: 0.4, text: "Scale your business with AI automation." },
+            { threshold: 0.6, text: "Ready to accelerate your digital presence?" },
+            { threshold: 0.8, text: "Let's engineer your success. Get in touch!" }
+        ];
+    }
+};
 
 const AIAssistantMascot = () => {
+    const location = useLocation();
+    const scrollMessages = getContextMessages(location.pathname);
     const [currentFrame, setCurrentFrame] = useState(1);
     const [messageIndex, setMessageIndex] = useState(0);
 
@@ -49,6 +93,11 @@ const AIAssistantMascot = () => {
         }
     });
 
+    // Reset message when route changes
+    useEffect(() => {
+        setMessageIndex(0);
+    }, [location.pathname]);
+
     const frameString = String(currentFrame).padStart(3, '0');
     const imageSrc = `/ai-agent/ezgif-frame-${frameString}.jpg`;
 
@@ -75,8 +124,8 @@ const AIAssistantMascot = () => {
                         </div>
                         <div className="flex-1 font-light tracking-wide pt-1">
                             <TypeAnimation
-                                key={messageIndex} /* Ensures TypeAnimation restarts on new text */
-                                sequence={[scrollMessages[messageIndex].text]}
+                                key={messageIndex + location.pathname} /* Ensures TypeAnimation restarts on new text and page load */
+                                sequence={[scrollMessages[messageIndex]?.text || scrollMessages[0].text]}
                                 wrapper="span"
                                 cursor={true}
                                 speed={60}

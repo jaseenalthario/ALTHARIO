@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { TypeAnimation } from 'react-type-animation';
 import ErrorBoundary from '../components/ErrorBoundary';
-import AIAssistantMascot from '../components/AIAssistantMascot';
 
 const codeSnippets = [
     "const ai = new Agent();",
@@ -349,8 +348,8 @@ const HeroSlider = () => {
                             </motion.p>
 
                             <motion.div variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }}>
-                                <Link to="/about-company" className="inline-flex items-center justify-center px-8 py-3.5 text-xs uppercase tracking-wider font-semibold text-white rounded bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-md transition-all duration-300">
-                                    <span>Explore Solutions</span>
+                                <Link to="/contacts" className="inline-flex items-center justify-center px-8 py-3.5 text-xs uppercase tracking-wider font-semibold text-white rounded bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-md transition-all duration-300">
+                                    <span>Start Project</span>
                                     <ArrowRight size={14} className="ml-3" />
                                 </Link>
                             </motion.div>
@@ -700,7 +699,6 @@ useGLTF.preload('https://vazxmixizvqrz.supabase.co/storage/v1/object/public/mode
 const Home = () => {
     return (
         <div className="relative w-full min-h-screen bg-[#070c1a] font-sans">
-            <AIAssistantMascot />
 
             {/* Soft global gradient background */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#131d3b] via-[#070c1a] to-[#040814] opacity-80 z-0 pointer-events-none"></div>
@@ -1295,7 +1293,7 @@ const Home = () => {
                                         </div>
 
                                         <h3 className="text-white text-5xl font-black mb-10 tracking-tighter text-center leading-tight uppercase">ELITE CODE<br />ON DEMAND</h3>
-                                        <Link to="/contacts" className="flex items-center space-x-6 text-black font-black tracking-[0.4em] uppercase text-sm bg-white px-14 py-7 rounded-full hover:bg-[#fc443b] hover:text-white hover:shadow-[0_0_60px_rgba(252,68,59,0.5)] transition-all duration-700">
+                                        <Link to="/contacts" className="relative z-50 flex items-center space-x-6 text-black font-black tracking-[0.4em] uppercase text-sm bg-white px-14 py-7 rounded-full hover:bg-[#fc443b] hover:text-white hover:shadow-[0_0_60px_rgba(252,68,59,0.5)] transition-all duration-700 cursor-pointer pointer-events-auto">
                                             <span>TALK TO EXPERTS</span>
                                             <ArrowRight size={20} />
                                         </Link>

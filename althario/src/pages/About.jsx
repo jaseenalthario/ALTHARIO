@@ -37,12 +37,12 @@ const expertise = [
 ];
 
 const capabilities = [
-    { num: "01", title: "AI Automation", desc: "Streamline business processes with intelligent AI solutions.", icon: Cpu },
-    { num: "02", title: "Custom Website Design", desc: "Design websites that are fast, modern, and user-friendly.", icon: Laptop },
-    { num: "03", title: "Digital Marketing", desc: "Increase leads, traffic, and visibility with smart campaigns.", icon: TrendingUp },
-    { num: "04", title: "Software Development", desc: "Develop custom software, mobile apps, and internal tools.", icon: Code },
-    { num: "05", title: "E-Commerce Development", desc: "Build online stores that convert visitors into customers.", icon: ShoppingCart },
-    { num: "06", title: "IT & Support", desc: "Keep your systems secure, updated, and fully optimized.", icon: ShieldCheck }
+    { num: "01", title: "AI Automation", desc: "Streamline business processes with intelligent AI solutions.", icon: Cpu, image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070" },
+    { num: "02", title: "Custom Website Design", desc: "Design websites that are fast, modern, and user-friendly.", icon: Laptop, image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072" },
+    { num: "03", title: "Digital Marketing", desc: "Increase leads, traffic, and visibility with smart campaigns.", icon: TrendingUp, image: "https://images.unsplash.com/photo-1551288049-bbbda536ad89?q=80&w=2070" },
+    { num: "04", title: "Software Development", desc: "Develop custom software, mobile apps, and internal tools.", icon: Code, image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070" },
+    { num: "05", title: "E-Commerce Development", desc: "Build online stores that convert visitors into customers.", icon: ShoppingCart, image: "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?q=80&w=2070" },
+    { num: "06", title: "IT & Support", desc: "Keep your systems secure, updated, and fully optimized.", icon: ShieldCheck, image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070" }
 ];
 
 const fadeUp = {
@@ -376,25 +376,56 @@ const About = () => {
                         {capabilities.map((cap, idx) => (
                             <motion.div
                                 key={idx}
-                                variants={fadeUp}
-                                className="group p-10 bg-gradient-to-b from-[#0a1024]/60 to-transparent border border-white/5 rounded-3xl relative overflow-hidden transition-all duration-500 hover:border-white/10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+                                variants={{
+                                    hidden: { opacity: 0, scale: 0.9, y: 30 },
+                                    visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }
+                                }}
+                                className="group h-[450px] rounded-[2.5rem] relative overflow-hidden transition-all duration-700 hover:shadow-[0_40px_80px_rgba(0,0,0,0.7)] border border-white/5 hover:border-[#fc443b]/30 bg-[#060b1a]"
                             >
-                                {/* massive background number */}
-                                <div className="absolute -top-6 -right-4 text-9xl font-black text-white/[0.02] transform group-hover:scale-110 group-hover:text-[#fc443b]/[0.05] transition-all duration-700 pointer-events-none select-none">
-                                    {cap.num}
+                                {/* Immersive Background Image Container */}
+                                <div className="absolute inset-0 z-0">
+                                    <motion.div
+                                        animate={{ scale: [1, 1.05, 1] }}
+                                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                                        className="w-full h-full bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"
+                                        style={{ backgroundImage: `url(${cap.image})` }}
+                                    ></motion.div>
+
+                                    {/* Advanced Dynamic Overlays */}
+                                    <div className="absolute inset-0 bg-[#060b1a]/70 group-hover:bg-[#060b1a]/40 transition-colors duration-700"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#060b1a] via-[#060b1a]/60 to-transparent opacity-100"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-[#fc443b]/20 to-transparent opacity-0 group-hover:opacity-60 transition-opacity duration-700"></div>
                                 </div>
 
-                                <div className="flex items-center space-x-4 mb-8">
-                                    <div className="w-10 h-px bg-white/10 group-hover:bg-[#fc443b]/50 group-hover:w-16 transition-all duration-500"></div>
-                                    <span className="text-zinc-500 font-mono text-sm group-hover:text-[#fc443b] transition-colors">{cap.num}</span>
+                                {/* Content Architecture */}
+                                <div className="absolute inset-0 p-10 flex flex-col justify-end z-10">
+                                    {/* Stylized background number */}
+                                    <div className="absolute -top-6 -right-4 text-[12rem] font-black text-white/[0.04] transform group-hover:scale-105 group-hover:text-[#fc443b]/[0.1] transition-all duration-700 pointer-events-none select-none tracking-tighter">
+                                        {cap.num}
+                                    </div>
+
+                                    {/* Tech Icon Badge */}
+                                    <div className="mb-8 w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-3xl border border-white/20 flex items-center justify-center group-hover:bg-[#fc443b] group-hover:border-[#fc443b] group-hover:shadow-[0_0_30px_rgba(252,68,59,0.5)] transition-all duration-500 relative transform group-hover:-translate-y-2">
+                                        <cap.icon size={26} strokeWidth={1.5} className="text-white group-hover:text-white transition-colors" />
+                                    </div>
+
+                                    {/* Text Content with Slide Animation */}
+                                    <div className="space-y-4 translate-y-6 group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                                        <h3 className="text-3xl font-bold text-white tracking-tight leading-tight group-hover:text-white transition-colors">{cap.title}</h3>
+                                        <p className="text-zinc-300 text-[15px] leading-relaxed font-light opacity-0 group-hover:opacity-100 transition-all duration-700 delay-150 max-w-[90%]">
+                                            {cap.desc}
+                                        </p>
+
+                                        {/* Animated CTA */}
+                                        <div className="pt-4 flex items-center space-x-3 text-[#fc443b] text-[11px] font-black uppercase tracking-[0.2em] transform -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 delay-300">
+                                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-[#fc443b]">Explore Service</span>
+                                            <ArrowRight size={14} className="text-[#fc443b]" />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="mb-6 h-12 w-12 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center group-hover:bg-[#fc443b]/10 group-hover:border-[#fc443b]/20 transition-all duration-500 relative z-10">
-                                    <cap.icon size={22} strokeWidth={1.5} className="text-zinc-400 group-hover:text-[#fc443b] transition-colors" />
-                                </div>
-
-                                <h3 className="text-xl font-medium text-white mb-4 relative z-10">{cap.title}</h3>
-                                <p className="text-zinc-400 text-[14px] leading-relaxed font-light relative z-10">{cap.desc}</p>
+                                {/* Bottom Accent Reflection */}
+                                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#fc443b] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 origin-center opacity-50 shadow-[0_0_15px_rgba(252,68,59,0.8)]"></div>
                             </motion.div>
                         ))}
                     </motion.div>
@@ -419,10 +450,10 @@ const About = () => {
                         </div>
 
                         <div className="flex-shrink-0">
-                            <a href="mailto:info@althario.com" className="inline-flex items-center justify-center px-10 py-5 text-[14px] uppercase tracking-widest font-bold text-[#fc443b] bg-white rounded-full hover:bg-zinc-100 hover:scale-105 shadow-xl transition-all duration-500 group">
+                            <Link to="/contacts" className="inline-flex items-center justify-center px-10 py-5 text-[14px] uppercase tracking-widest font-bold text-[#fc443b] bg-white rounded-full hover:bg-zinc-100 hover:scale-105 shadow-xl transition-all duration-500 group">
                                 <span>Get In Touch</span>
                                 <ArrowRight size={18} strokeWidth={2.5} className="ml-3 group-hover:translate-x-1.5 transition-transform duration-500" />
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </motion.div>

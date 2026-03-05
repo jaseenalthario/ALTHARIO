@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, MessageSquare, ArrowRight } from 'lucide-react';
+import { X, Sparkles, MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const DemoContactPopup = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -26,6 +27,12 @@ const DemoContactPopup = () => {
         setIsVisible(false);
         setHasBeenClosed(true);
         sessionStorage.setItem('demo_popup_closed', 'true');
+    };
+
+    const handleDemoBook = () => {
+        const whatsappNumber = "971562406732";
+        const message = "Hi Althario, I'm interested in booking a free demo of your services!";
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
     };
 
     if (hasBeenClosed && !isVisible) return null;
@@ -68,12 +75,19 @@ const DemoContactPopup = () => {
                                 </p>
 
                                 <div className="flex flex-col sm:flex-row items-center gap-3">
-                                    <button className="w-full sm:w-auto px-6 py-3.5 bg-[#fc443b] text-white text-[13px] font-bold uppercase tracking-widest rounded-full hover:bg-[#d6312a] transition-all duration-300 shadow-[0_10px_25px_rgba(252,68,59,0.3)] hover:shadow-[0_15px_35px_rgba(252,68,59,0.4)] hover:-translate-y-1">
+                                    <button
+                                        onClick={handleDemoBook}
+                                        className="w-full sm:w-auto px-6 py-3.5 bg-[#fc443b] text-white text-[13px] font-bold uppercase tracking-widest rounded-full hover:bg-[#d6312a] transition-all duration-300 shadow-[0_10px_25px_rgba(252,68,59,0.3)] hover:shadow-[0_15px_35px_rgba(252,68,59,0.4)] hover:-translate-y-1"
+                                    >
                                         Book Free Demo
                                     </button>
-                                    <button className="w-full sm:w-auto px-6 py-3.5 bg-white/5 border border-white/10 text-white text-[13px] font-bold uppercase tracking-widest rounded-full hover:bg-white/10 transition-all duration-300">
+                                    <Link
+                                        to="/contacts"
+                                        onClick={handleClose}
+                                        className="w-full sm:w-auto px-6 py-3.5 bg-white/5 border border-white/10 text-white text-[13px] font-bold uppercase tracking-widest rounded-full hover:bg-white/10 transition-all duration-300 text-center"
+                                    >
                                         Contact Us
-                                    </button>
+                                    </Link>
                                 </div>
 
                                 <div className="mt-6 flex items-center space-x-2 text-[11px] text-zinc-500 font-medium uppercase tracking-wider">

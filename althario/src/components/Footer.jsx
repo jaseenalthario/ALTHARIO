@@ -33,9 +33,9 @@ const Footer = () => {
 
                         <div className="flex items-center space-x-5 mt-10">
                             {[
-                                { network: Facebook, link: 'https://facebook.com' },
-                                { network: Linkedin, link: 'https://linkedin.com' },
-                                { network: Instagram, link: 'https://instagram.com' }
+                                { network: Facebook, link: 'https://www.facebook.com/althario.ae' },
+                                { network: Linkedin, link: 'https://www.linkedin.com/company/al-thario/' },
+                                { network: Instagram, link: 'https://www.instagram.com/al.thario?igsh=MTlobDY2cTRnYXM5dw==' }
                             ].map((social, i) => {
                                 const Icon = social.network;
                                 return (
@@ -79,10 +79,9 @@ const Footer = () => {
                             <h3 className="text-[11px] font-bold text-white mb-6 uppercase tracking-[0.2em]">Expertise</h3>
                             <ul className="space-y-4 text-[14px] text-zinc-400 font-light">
                                 {[
-                                    { name: 'Agentic AI', path: '/agentic-ai' },
-                                    { name: 'Software Dev', path: '/software-development' },
-                                    { name: 'Web Engineering', path: '/web-development' },
-                                    { name: 'Growth Marketing', path: '/digital-marketing-2' }
+                                    { name: 'Agentic AI', path: '/services/agentic-ai' },
+                                    { name: 'Software Development', path: '/services/software-development' },
+                                    { name: 'Web Development', path: '/services/web-development' }
                                 ].map((service) => (
                                     <li key={service.name}>
                                         <Link to={service.path} className="hover:text-white transition-colors duration-300 relative group inline-flex items-center">

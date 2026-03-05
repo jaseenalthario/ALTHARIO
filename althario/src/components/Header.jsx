@@ -38,7 +38,7 @@ const Header = () => {
                             <div className="flex space-x-10 items-center h-full">
                                 <a href="mailto:info@althario.com" className="flex items-center space-x-2.5 hover:text-white transition-colors duration-300">
                                     <Mail size={12} className="text-[#fc443b]" />
-                                    <span>info@althario.com</span>
+                                    <span className="lowercase">info@althario.com</span>
                                 </a>
                                 <div className="flex items-center space-x-2.5">
                                     <MapPin size={12} className="text-[#fc443b]" />
@@ -51,9 +51,9 @@ const Header = () => {
                                     <span>+971 56 240 6732</span>
                                 </div>
                                 <div className="flex space-x-6 items-center pl-10 border-l border-white/10 h-full">
-                                    <a href="https://facebook.com" className="hover:text-white transition-colors duration-300"><Facebook size={14} /></a>
-                                    <a href="https://linkedin.com" className="hover:text-white transition-colors duration-300"><Linkedin size={14} /></a>
-                                    <a href="https://instagram.com" className="hover:text-white transition-colors duration-300"><Instagram size={14} /></a>
+                                    <a href="https://www.facebook.com/althario.ae" className="hover:text-white transition-colors duration-300"><Facebook size={14} /></a>
+                                    <a href="https://www.linkedin.com/company/al-thario/" className="hover:text-white transition-colors duration-300"><Linkedin size={14} /></a>
+                                    <a href="https://www.instagram.com/al.thario?igsh=MTlobDY2cTRnYXM5dw==" className="hover:text-white transition-colors duration-300"><Instagram size={14} /></a>
                                 </div>
                             </div>
                         </div>
@@ -104,9 +104,9 @@ const Header = () => {
                                         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#fc443b] to-transparent opacity-80 shadow-[0_0_15px_rgba(252,68,59,0.8)]"></div>
                                         <div className="p-3 bg-gradient-to-b from-white/[0.03] to-transparent">
                                             {[
-                                                { name: 'Agentic AI', path: '/agentic-ai' },
-                                                { name: 'Software Development', path: '/software-development' },
-                                                { name: 'Web Development', path: '/web-development' }
+                                                { name: 'Agentic AI', path: '/services/agentic-ai' },
+                                                { name: 'Software Development', path: '/services/software-development' },
+                                                { name: 'Web Development', path: '/services/web-development' }
                                             ].map((srv) => (
                                                 <Link
                                                     key={srv.name}
@@ -127,7 +127,7 @@ const Header = () => {
 
                         {[
                             { name: 'Portfolio', path: '/portfolio-grid' },
-                            { name: 'Contacts', path: '/contacts' },
+                            { name: 'Contact Us', path: '/contacts' },
                             { name: 'Journal', path: '/blog-grid' }
                         ].map((item) => (
                             <Link key={item.name} to={item.path} className="relative text-[13px] font-medium tracking-wide text-zinc-300 hover:text-white transition-colors duration-300 group py-2">
@@ -192,9 +192,9 @@ const Header = () => {
                                             exit={{ height: 0, opacity: 0 }}
                                             className="flex flex-col pl-6 mt-6 space-y-5 overflow-hidden border-l border-white/10"
                                         >
-                                            <Link to="/agentic-ai" className="text-lg text-zinc-400 hover:text-white transition-colors font-light" onClick={() => setIsMobileMenuOpen(false)}>Agentic AI</Link>
-                                            <Link to="/software-development" className="text-lg text-zinc-400 hover:text-white transition-colors font-light" onClick={() => setIsMobileMenuOpen(false)}>Software Development</Link>
-                                            <Link to="/web-development" className="text-lg text-zinc-400 hover:text-white transition-colors font-light" onClick={() => setIsMobileMenuOpen(false)}>Web Development</Link>
+                                            <Link to="/services/agentic-ai" className="text-lg text-zinc-400 hover:text-white transition-colors font-light" onClick={() => setIsMobileMenuOpen(false)}>Agentic AI</Link>
+                                            <Link to="/services/software-development" className="text-lg text-zinc-400 hover:text-white transition-colors font-light" onClick={() => setIsMobileMenuOpen(false)}>Software Development</Link>
+                                            <Link to="/services/web-development" className="text-lg text-zinc-400 hover:text-white transition-colors font-light" onClick={() => setIsMobileMenuOpen(false)}>Web Development</Link>
                                         </motion.div>
                                     )}
                                 </AnimatePresence>

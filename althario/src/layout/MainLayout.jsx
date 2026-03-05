@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import WhatsAppWidget from '../components/WhatsAppWidget';
 import DemoContactPopup from '../components/DemoContactPopup';
+import AIAssistantMascot from '../components/AIAssistantMascot';
 
 const MainLayout = () => {
     return (
@@ -14,6 +15,7 @@ const MainLayout = () => {
             </main>
             <Footer />
             <WhatsAppWidget />
+            <AIAssistantMascot />
             <DemoContactPopup />
         </div>
     );
