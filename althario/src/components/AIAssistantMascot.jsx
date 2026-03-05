@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
+import { Sparkles } from 'lucide-react';
 
 const scrollMessages = [
     { threshold: 0.0, text: "👋 Hi! I'm your Althario AI assistant." },
@@ -61,38 +62,55 @@ const AIAssistantMascot = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.9, transition: { duration: 0.2 } }}
                     transition={{ duration: 0.4, type: "spring", bounce: 0.4 }}
-                    className="mb-4 mr-2 lg:mr-4 bg-[#0a0f1d]/90 backdrop-blur-xl border border-[#fc443b]/30 rounded-2xl rounded-br-sm px-6 py-4 shadow-[0_10px_40px_rgba(0,0,0,0.8)] max-w-[240px] pointer-events-auto relative"
+                    className="mb-6 mr-2 lg:mr-4 bg-gradient-to-br from-[#0a0f1d]/95 to-[#131d3b]/95 backdrop-blur-2xl border border-white/10 rounded-[1.5rem] rounded-br-sm p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_20px_rgba(252,68,59,0.15)] max-w-[280px] pointer-events-auto relative group/bubble hover:shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(252,68,59,0.3)] transition-all duration-500"
                 >
-                    <div className="absolute -bottom-2 right-4 w-4 h-4 bg-[#0a0f1d]/90 border-b border-r border-[#fc443b]/30 transform rotate-45"></div>
-                    <div className="text-white text-sm font-medium leading-relaxed relative z-10">
-                        <TypeAnimation
-                            key={messageIndex} /* Ensures TypeAnimation restarts on new text */
-                            sequence={[scrollMessages[messageIndex].text]}
-                            wrapper="span"
-                            cursor={true}
-                            speed={50}
-                            style={{ display: 'inline-block' }}
-                        />
+                    {/* Top edge highlight */}
+                    <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+
+                    <div className="absolute -bottom-2 right-6 w-5 h-5 bg-[#131d3b]/95 border-b border-r border-white/10 transform rotate-45"></div>
+
+                    <div className="text-white text-sm font-medium leading-relaxed relative z-10 flex items-start space-x-4">
+                        <div className="mt-0.5 w-7 h-7 shrink-0 rounded-full bg-gradient-to-tr from-[#fc443b] to-[#ff003c] flex items-center justify-center shadow-[0_0_15px_rgba(252,68,59,0.5)]">
+                            <Sparkles size={14} className="text-white" />
+                        </div>
+                        <div className="flex-1 font-light tracking-wide pt-1">
+                            <TypeAnimation
+                                key={messageIndex} /* Ensures TypeAnimation restarts on new text */
+                                sequence={[scrollMessages[messageIndex].text]}
+                                wrapper="span"
+                                cursor={true}
+                                speed={60}
+                                style={{ display: 'inline-block' }}
+                            />
+                        </div>
                     </div>
                 </motion.div>
             </AnimatePresence>
 
             {/* Mascot Container */}
             <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ y: [-5, 5, -5] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="relative w-28 h-28 lg:w-32 lg:h-32 pointer-events-auto cursor-pointer group"
             >
+                {/* Holographic Base Projector Light */}
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-20 h-3 bg-[#fc443b] rounded-[100%] blur-[12px] opacity-40 group-hover:opacity-80 transition-opacity duration-700 pointer-events-none"></div>
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-10 h-1 bg-white rounded-[100%] blur-[4px] opacity-40 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+                {/* Rotating Tech Rings */}
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute inset-[-6px] rounded-full border border-dashed border-white/20 group-hover:border-[#00f0ff]/50 transition-colors duration-500 pointer-events-none"></motion.div>
+                <motion.div animate={{ rotate: -360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute inset-[-12px] rounded-full border-[1.5px] border-transparent border-t-[#fc443b]/40 border-b-[#fc443b]/40 group-hover:border-t-[#fc443b]/80 group-hover:border-b-[#fc443b]/80 transition-colors duration-500 pointer-events-none"></motion.div>
+
                 {/* Outer Glow */}
-                <div className="absolute inset-0 bg-[#fc443b]/10 rounded-full blur-[30px] group-hover:bg-[#fc443b]/20 transition-all duration-500"></div>
-                <div className="absolute inset-0 bg-[#00f0ff]/10 rounded-full blur-[20px] group-hover:bg-[#00f0ff]/20 transition-all duration-500 translate-x-2"></div>
+                <div className="absolute inset-0 bg-[#fc443b]/10 rounded-full blur-[30px] group-hover:bg-[#fc443b]/30 transition-all duration-500 pointer-events-none"></div>
+                <div className="absolute inset-0 bg-[#00f0ff]/10 rounded-full blur-[20px] group-hover:bg-[#00f0ff]/30 transition-all duration-500 translate-x-2 pointer-events-none"></div>
 
                 {/* Render the current frame */}
                 <img
                     src={imageSrc}
                     alt="AI Assistant"
                     // mix-blend-screen helps to blend dark JPG backgrounds into the app's dark theme
-                    className="absolute inset-0 w-full h-full object-cover mix-blend-screen rounded-full border-2 border-white/5 group-hover:border-[#fc443b]/30 shadow-[0_0_20px_rgba(252,68,59,0.2)] transition-all duration-500"
+                    className="absolute inset-0 w-full h-full object-cover mix-blend-screen rounded-full border-2 border-white/10 group-hover:border-[#fc443b]/50 shadow-[0_0_20px_rgba(252,68,59,0.1)] transition-all duration-500"
                 />
             </motion.div>
         </div>
