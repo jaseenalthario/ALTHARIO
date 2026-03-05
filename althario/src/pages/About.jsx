@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
 import {
     Users, LayoutGrid, BrainCircuit, Code,
     Share2, Laptop, TrendingUp, Cpu,
     ShoppingCart, ShieldCheck, ArrowRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const stats = [
     { value: "101", suffix: "+", label: "Satisfied Clients" },

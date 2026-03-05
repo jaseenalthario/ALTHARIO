@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Text, Float, MeshTransmissionMaterial, Environment, Lightformer, Html } from '@react-three/drei';
+import { Text, Float, MeshTransmissionMaterial, Environment, Lightformer, Html, useGLTF } from '@react-three/drei';
 import { Link } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
 import {
     ChevronRight, Code2, Globe, Cpu, ArrowRight, Zap, ShieldCheck, Layers,
@@ -9,6 +10,7 @@ import {
     Users, Briefcase, Award, Shield
 } from 'lucide-react';
 import { TypeAnimation } from 'react-type-animation';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const codeSnippets = [
     "const ai = new Agent();",
@@ -80,22 +82,21 @@ const LuxuryDataCore = () => {
 
 // 3D Background Elements
 const FloatingCode = () => {
-    const nodes = useMemo(() => {
-        return Array.from({ length: 40 }).map((_, i) => ({
-            id: i,
-            text: codeSnippets[Math.floor(Math.random() * codeSnippets.length)],
-            position: [
-                (Math.random() - 0.5) * 50,
-                (Math.random() - 0.5) * 45,
-                (Math.random() - 0.5) * 20 - 5
-            ],
-            scale: Math.random() * 0.4 + 0.3,
-            color: Math.random() > 0.85 ? '#fc443b' : '#334155',
-            speed: Math.random() * 0.8 + 0.2,
-            rotationIntensity: Math.random() * 0.3,
-            floatIntensity: Math.random() * 1.5 + 0.5
-        }));
-    }, []);
+    // Generate static values outside of render entirely using lazy initial state
+    const [nodes] = useState(() => Array.from({ length: 40 }).map((_, i) => ({
+        id: i,
+        text: codeSnippets[Math.floor(Math.random() * codeSnippets.length)],
+        position: [
+            (Math.random() - 0.5) * 50,
+            (Math.random() - 0.5) * 45,
+            (Math.random() - 0.5) * 20 - 5
+        ],
+        scale: Math.random() * 0.4 + 0.3,
+        color: Math.random() > 0.85 ? '#fc443b' : '#334155',
+        speed: Math.random() * 0.8 + 0.2,
+        rotationIntensity: Math.random() * 0.3,
+        floatIntensity: Math.random() * 1.5 + 0.5
+    })));
 
     const ref = useRef();
     useFrame((state, delta) => {
@@ -128,16 +129,17 @@ const ParticleSwarm = () => {
     const ref = useRef();
     const count = 3000;
 
-    const positions = useMemo(() => {
-        const positions = new Float32Array(count * 3);
+    // Generate positions using lazy state initialization to prevent hook impurity and render cascades
+    const [positions] = useState(() => {
+        const generatedPositions = new Float32Array(count * 3);
         const radius = 30;
         for (let i = 0; i < count; i++) {
-            positions[i * 3] = (Math.random() - 0.5) * radius * 2;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * radius * 2;
-            positions[i * 3 + 2] = (Math.random() - 0.5) * radius * 2;
+            generatedPositions[i * 3] = (Math.random() - 0.5) * radius * 2;
+            generatedPositions[i * 3 + 1] = (Math.random() - 0.5) * radius * 2;
+            generatedPositions[i * 3 + 2] = (Math.random() - 0.5) * radius * 2;
         }
-        return positions;
-    }, [count]);
+        return generatedPositions;
+    });
 
     useFrame((state, delta) => {
         if (ref.current) {
@@ -148,14 +150,16 @@ const ParticleSwarm = () => {
 
     return (
         <points ref={ref}>
-            <bufferGeometry>
-                <bufferAttribute
-                    attach="attributes-position"
-                    count={positions.length / 3}
-                    array={positions}
-                    itemSize={3}
-                />
-            </bufferGeometry>
+            {positions && (
+                <bufferGeometry>
+                    <bufferAttribute
+                        attach="attributes-position"
+                        count={positions.length / 3}
+                        array={positions}
+                        itemSize={3}
+                    />
+                </bufferGeometry>
+            )}
             <pointsMaterial size={0.025} color="#fc443b" sizeAttenuation={true} transparent opacity={0.3} depthWrite={false} />
         </points>
     );
@@ -250,7 +254,7 @@ const HeroSlider = () => {
                                     wrapper="span"
                                     cursor={true}
                                     repeat={0}
-                                    speed={80} // Very fast typing speed
+                                    speed={45} // Slower, more readable typing speed
                                 />
                             </motion.h1>
 
@@ -348,19 +352,20 @@ const TypewriterCode = () => {
         return () => clearTimeout(timeout);
     }, [charIndex, inView]);
 
-    let remaining = charIndex;
-
     return (
         <motion.div
             onViewportEnter={() => setInView(true)}
-            viewport={{ once: true, margin: "-10%" }}
+            viewport={{ once: false, margin: "-10%" }}
             className="p-8 sm:p-10 font-mono text-[14px] leading-[2.2] text-zinc-400 whitespace-pre-wrap flex flex-col items-start h-[320px]"
         >
             <div className="inline-block break-all">
                 {codeTokens.map((token, i) => {
-                    if (remaining <= 0) return null;
-                    const chars = token.text.substring(0, remaining);
-                    remaining -= token.text.length;
+                    // Calculate remaining capacity per token functionally without mutating outer state
+                    const priorChars = codeTokens.slice(0, i).reduce((acc, t) => acc + t.text.length, 0);
+                    const charsToRender = Math.max(0, Math.min(token.text.length, charIndex - priorChars));
+
+                    if (charsToRender <= 0) return null;
+                    const chars = token.text.substring(0, charsToRender);
                     return <span key={i} className={token.color}>{chars}</span>;
                 })}
                 <motion.span
@@ -375,7 +380,7 @@ const TypewriterCode = () => {
 
 const AnimatedNumber = ({ value }) => {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const isInView = useInView(ref, { once: false, margin: "-100px" });
 
     // Extract number and everything else as suffix
     const numValue = parseInt(value.replace(/[^0-9]/g, '')) || 0;
@@ -401,7 +406,7 @@ const AnimatedNumber = ({ value }) => {
 // 3D Angled Screen for Terminal
 const FloatingComputerScreen = () => {
     return (
-        <>
+        <ErrorBoundary fallback={<mesh><boxGeometry /><meshBasicMaterial color="#060b1a" /></mesh>}>
             <ambientLight intensity={1} />
             <spotLight position={[10, 10, 10]} intensity={2} color="#fc443b" />
             <Float speed={2.5} rotationIntensity={0.6} floatIntensity={1.2}>
@@ -437,9 +442,42 @@ const FloatingComputerScreen = () => {
                 </group>
             </Float>
             <Environment preset="city" />
-        </>
+        </ErrorBoundary>
     );
 };
+
+// 3D Photorealistic MacBook rendering TypewriterCode
+const FloatingLaptop = () => {
+    // using Suspense to fetch the standard photorealistic MacBook GLTF model
+    const mac = useGLTF('https://vazxmixizvqrz.supabase.co/storage/v1/object/public/models/macbook/model.gltf');
+    return (
+        <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
+            <group rotation={[0.2, Math.PI + 0.3, 0]} scale={1.1} position={[0, -1, 0]}>
+                <primitive object={mac.scene} />
+                <Html transform wrapperClass="laptop-screen" distanceFactor={1.17} position={[0, 1.56, -1.4]} rotation-x={-0.256}>
+                    <div className="w-[334px] h-[216px] bg-[#02050f] rounded-sm overflow-hidden border border-white/5 relative">
+                        {/* Window Header */}
+                        <div className="h-4 bg-[#0a0f1d] flex items-center px-2 border-b border-white/10">
+                            <div className="flex space-x-1">
+                                <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                                <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
+                                <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                            </div>
+                            <span className="ml-2 text-[6px] text-zinc-500 font-mono">althario-engineer.exe</span>
+                        </div>
+                        <div className="px-3 pt-1 transform scale-[0.65] origin-top-left -ml-2 -mt-1">
+                            <TypewriterCode />
+                        </div>
+                        {/* CRT Scanline Overlay */}
+                        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px] mix-blend-overlay opacity-20 z-10"></div>
+                    </div>
+                </Html>
+            </group>
+        </Float>
+    );
+};
+// Ensure GLTF is preloaded for instant render
+useGLTF.preload('https://vazxmixizvqrz.supabase.co/storage/v1/object/public/models/macbook/model.gltf');
 
 const Home = () => {
     return (
@@ -484,7 +522,7 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, x: -30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
+                                viewport={{ once: false }}
                                 transition={{ duration: 1 }}
                                 className="lg:w-1/2"
                             >
@@ -499,16 +537,46 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, x: 30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
+                                viewport={{ once: false }}
                                 transition={{ duration: 1, delay: 0.2 }}
                                 className="lg:w-1/2 mt-10 lg:mt-20"
                             >
                                 <p className="text-white text-2xl md:text-3xl font-light leading-relaxed mb-10 italic border-l-4 border-[#fc443b]/40 pl-10">
                                     "We are a team of creators and strategists dedicated to <span className="text-white font-bold">building your standout digital presence</span>."
                                 </p>
-                                <p className="text-zinc-400 text-xl leading-relaxed font-normal pl-11">
+                                <p className="text-zinc-400 text-xl leading-relaxed font-normal pl-11 mb-10">
                                     From crafting high-performance websites to implementing intelligent AI automation and executing impactful digital marketing campaigns, we provide the end-to-end solutions that deliver measurable success.
                                 </p>
+
+                                {/* Amazing 3D Laptop with typing code */}
+                                <div className="h-[320px] w-full relative rounded-3xl overflow-hidden bg-gradient-to-br from-white/[0.04] to-transparent border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.5)] hidden md:block group">
+                                    {/* Accent glows */}
+                                    <div className="absolute inset-0 bg-[#fc443b]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none"></div>
+                                    <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-[#fc443b]/20 blur-[50px] pointer-events-none rounded-full"></div>
+
+                                    <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }} dpr={[1, 2]}>
+                                        <ambientLight intensity={1.5} />
+                                        <spotLight position={[5, 10, 5]} intensity={2.5} color="#ffffff" />
+                                        <spotLight position={[-5, 5, 5]} intensity={1.5} color="#fc443b" />
+                                        <React.Suspense fallback={null}>
+                                            <ErrorBoundary fallback={
+                                                <group position={[0, -1, 0]}>
+                                                    <mesh>
+                                                        <boxGeometry args={[4, 0.2, 3]} />
+                                                        <meshStandardMaterial color="#333" />
+                                                    </mesh>
+                                                    <mesh position={[0, 1.5, -1.5]} rotation={[0.2, 0, 0]}>
+                                                        <boxGeometry args={[4, 3, 0.1]} />
+                                                        <meshStandardMaterial color="#222" />
+                                                    </mesh>
+                                                </group>
+                                            }>
+                                                <FloatingLaptop />
+                                                <Environment preset="city" />
+                                            </ErrorBoundary>
+                                        </React.Suspense>
+                                    </Canvas>
+                                </div>
                             </motion.div>
                         </div>
 
@@ -516,7 +584,7 @@ const Home = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
+                            viewport={{ once: false }}
                             className="bg-white/[0.03] backdrop-blur-3xl rounded-3xl border border-white/10 p-10 mb-16"
                         >
                             <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24">
@@ -550,7 +618,7 @@ const Home = () => {
                                     key={i}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: false }}
                                     transition={{ duration: 0.8, delay: i * 0.15 }}
                                     className="flex flex-col items-center lg:items-start group p-8 rounded-3xl hover:bg-white/[0.02] transition-colors"
                                 >
@@ -602,7 +670,7 @@ const Home = () => {
                                     key={idx}
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: "-50px" }}
+                                    viewport={{ once: false, margin: "-50px" }}
                                     transition={{ duration: 0.6, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
                                     className="p-10 lg:p-14 group hover:bg-white/[0.01] transition-colors duration-500"
                                 >
@@ -641,7 +709,7 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
+                                viewport={{ once: false }}
                                 transition={{ duration: 0.8 }}
                             >
                                 <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-8 uppercase">ENGINEERING <span className="text-[#fc443b]">IMPACT</span></h2>
@@ -659,7 +727,7 @@ const Home = () => {
                                     key={idx}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: false }}
                                     transition={{ duration: 0.8, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
                                     className="p-12 rounded-[3.5rem] bg-white/[0.04] backdrop-blur-3xl border border-white/10 hover:border-[#fc443b]/60 transition-all duration-700 shadow-2xl relative group overflow-hidden"
                                 >
@@ -705,7 +773,7 @@ const Home = () => {
                                 <motion.h2
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: false }}
                                     className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase mb-6"
                                 >
                                     CORE <span className="text-[#fc443b]">CAPABILITIES</span>
@@ -713,7 +781,7 @@ const Home = () => {
                                 <motion.div
                                     initial={{ opacity: 0, width: 0 }}
                                     whileInView={{ opacity: 1, width: "100px" }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: false }}
                                     transition={{ duration: 0.8 }}
                                     className="h-1 bg-[#fc443b]"
                                 ></motion.div>
@@ -750,7 +818,7 @@ const Home = () => {
                                         key={idx}
                                         initial={{ opacity: 0, scale: 0.95, y: 30 }}
                                         whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                                        viewport={{ once: true, margin: "-50px" }}
+                                        viewport={{ once: false, margin: "-50px" }}
                                         transition={{ duration: 0.7, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
                                         className={`relative z-10 rounded-[2rem] overflow-hidden group border border-white/10 hover:border-[#fc443b]/50 transition-all duration-700 shadow-2xl bg-[#0a0f1d] flex flex-col ${feat.customClass}`}
                                     >
@@ -790,7 +858,7 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, x: -30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
+                                viewport={{ once: false }}
                                 transition={{ duration: 1 }}
                                 className="lg:w-1/3 text-center lg:text-left"
                             >
@@ -809,7 +877,7 @@ const Home = () => {
                                         key={i}
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         whileInView={{ opacity: 1, scale: 1 }}
-                                        viewport={{ once: true }}
+                                        viewport={{ once: false }}
                                         transition={{ duration: 0.8, delay: i * 0.1 }}
                                         className="relative h-[300px] rounded-[3.5rem] overflow-hidden group border border-white/10"
                                     >
@@ -842,7 +910,7 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, x: -40 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
+                                viewport={{ once: false }}
                                 transition={{ duration: 1 }}
                             >
                                 <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-12 leading-tight uppercase">OUR <span className="text-[#fc443b]">ELITE</span><br />WORKFLOW</h2>
@@ -906,7 +974,7 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, x: -30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
+                                viewport={{ once: false }}
                             >
                                 <div className="flex items-center space-x-4 text-[#fc443b] mb-6 uppercase tracking-[0.4em] font-black text-xs">
                                     <CheckCircle2 size={16} />
@@ -917,7 +985,7 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, x: 30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
+                                viewport={{ once: false }}
                             >
                                 <Link to="/portfolio-grid" className="px-8 py-4 bg-white/[0.03] backdrop-blur-md border border-white/10 text-white text-xs uppercase tracking-widest font-bold hover:bg-[#fc443b] hover:border-transparent rounded-full hover:shadow-[0_10px_40px_rgba(252,68,59,0.3)] transition-all duration-500 whitespace-nowrap inline-flex items-center space-x-3 group">
                                     <span>View All Case Studies</span>
@@ -953,7 +1021,7 @@ const Home = () => {
                                     key={idx}
                                     initial={{ opacity: 0, y: 40 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: "-100px" }}
+                                    viewport={{ once: false, margin: "-100px" }}
                                     transition={{ duration: 0.8, delay: idx * 0.15 }}
                                     className="group relative rounded-[3rem] overflow-hidden bg-[#0a0f1d] border border-white/10 hover:border-[#fc443b]/50 hover:shadow-2xl transition-all duration-700 min-h-[500px] flex flex-col"
                                 >
@@ -1013,7 +1081,7 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
+                                viewport={{ once: false }}
                                 transition={{ duration: 0.8 }}
                             >
                                 <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-10">INVESTMENT <span className="text-[#fc443b]">MODELS</span></h2>
@@ -1030,7 +1098,7 @@ const Home = () => {
                                     key={i}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: false }}
                                     transition={{ duration: 0.8, delay: i * 0.15 }}
                                     className="group p-16 rounded-[4rem] bg-white/[0.03] backdrop-blur-3xl border border-white/10 hover:border-[#fc443b] transition-all duration-700 relative overflow-hidden flex flex-col items-center text-center shadow-2xl"
                                 >
@@ -1062,7 +1130,7 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, x: -40 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true, margin: "-100px" }}
+                                viewport={{ once: false, margin: "-100px" }}
                                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                                 className="flex flex-col relative z-20"
                             >
@@ -1071,7 +1139,7 @@ const Home = () => {
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: false }}
                                     transition={{ duration: 0.8, delay: 0.2 }}
                                     className="inline-flex items-center space-x-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/10 mb-8 backdrop-blur-md w-max"
                                 >
@@ -1108,7 +1176,7 @@ const Home = () => {
                             <motion.div
                                 initial={{ opacity: 0, x: 40, scale: 0.9 }}
                                 whileInView={{ opacity: 1, x: 0, scale: 1 }}
-                                viewport={{ once: true, margin: "-100px" }}
+                                viewport={{ once: false, margin: "-100px" }}
                                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                                 className="relative z-10 flex justify-center lg:justify-end items-center"
                             >

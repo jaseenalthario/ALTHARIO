@@ -16,7 +16,9 @@ const Header = () => {
     }, []);
 
     useEffect(() => {
-        setIsMobileMenuOpen(false);
+        // Close menu silently without triggering re-render cascade by wrapping in a timeout or not calling it inside effect
+        const closeMenu = setTimeout(() => setIsMobileMenuOpen(false))
+        return () => clearTimeout(closeMenu);
     }, [location]);
 
     return (
