@@ -654,7 +654,11 @@ const FloatingComputerScreen = () => {
                     </Html>
                 </group>
             </Float>
-            <Environment preset="city" />
+            <Environment resolution={256}>
+                <Lightformer form="rect" intensity={3} color="#fc443b" position={[5, 10, 10]} scale={20} onUpdate={self => self.lookAt(0, 0, 0)} />
+                <Lightformer form="rect" intensity={3} color="#00f0ff" position={[-5, -10, -10]} scale={20} onUpdate={self => self.lookAt(0, 0, 0)} />
+                <Lightformer form="circle" intensity={1} color="#ffffff" position={[0, 0, 15]} scale={5} onUpdate={self => self.lookAt(0, 0, 0)} />
+            </Environment>
         </ErrorBoundary>
     );
 };
@@ -1083,8 +1087,8 @@ const Home = () => {
                 <div className="relative w-full z-20 bg-[#060b1a] pt-16 pb-24 lg:py-0 overflow-hidden">
                     {/* Immersive Background for Features */}
                     <div
-                        className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-15 scale-105 mix-blend-luminosity"
-                        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=2070')" }}
+                        className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-[0.12] scale-105 mix-blend-screen"
+                        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070')" }}
                     ></div>
                     <div className="absolute inset-0 bg-gradient-to-r from-[#060b1a]/90 via-[#060b1a]/70 to-[#060b1a]/90"></div>
                     {/* Sticky Left: Laptop & Typing Code Background (Desktop Only) */}
@@ -1351,7 +1355,7 @@ const Home = () => {
                                         { val: "10x", label: "Speed Increase" },
                                         { val: "100%", label: "Data Integrity" }
                                     ],
-                                    image: "https://images.unsplash.com/photo-1516549655669-bfa0993540d5?q=80&w=2072"
+                                    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070"
                                 }
                             ].map((study, idx) => (
                                 <motion.div
