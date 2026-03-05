@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { TypeAnimation } from 'react-type-animation';
 import ErrorBoundary from '../components/ErrorBoundary';
+import AIAssistantMascot from '../components/AIAssistantMascot';
 
 const codeSnippets = [
     "const ai = new Agent();",
@@ -699,6 +700,8 @@ useGLTF.preload('https://vazxmixizvqrz.supabase.co/storage/v1/object/public/mode
 const Home = () => {
     return (
         <div className="relative w-full min-h-screen bg-[#070c1a] font-sans">
+            <AIAssistantMascot />
+
             {/* Soft global gradient background */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#131d3b] via-[#070c1a] to-[#040814] opacity-80 z-0 pointer-events-none"></div>
 
